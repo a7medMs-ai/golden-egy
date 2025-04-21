@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# لازم تيجي هنا
+# ✅ لازم يكون هنا فورا بعد import
 st.set_page_config(page_title="Golden.Egy", layout="wide")
 
 # 🟡 تحميل البيانات
@@ -11,8 +11,6 @@ def load_data():
     return pd.read_csv("golden_egy_data.csv", parse_dates=["datetime"])
 
 df = load_data()
-
-st.set_page_config(page_title="Golden.Egy", layout="wide")
 
 # 🎨 عنوان
 st.title("💰 Golden.Egy – Gold & Dollar Tracker")
