@@ -31,6 +31,11 @@ default_metric = "عيار 21"
 metric_options = [col for col in df.columns if col not in ["datetime"]]
 metric = st.sidebar.selectbox("📊 Choose Metric to Track:", metric_options, index=metric_options.index(default_metric))
 
+# Ensure the selected metric exists in the dataframe
+if metric not in filtered_df.columns:
+    st.error(f"The column '{metric}' is not available in the dataset.")
+    st.stop()
+
 # Main chart for selected metric
 fig = px.line(
     filtered_df,
@@ -52,6 +57,15 @@ st.plotly_chart(fig, use_container_width=True)
 # 💰 Show three lines: Gold 21, Bank Dollar, and Jewelry Dollar
 if metric == "عيار 21":
     st.subheader("Comparison: Gold 21 vs. Dollar Prices")
+    
+    # Ensure columns are numeric
+    numeric_columns = ["عيار 21", "دولار البنوك", "دولار الصاغة"]
+    for col in numeric_columns:
+        filtered_df[col] = pd.to_numeric(filtered_df[col], errors="coerce")
+    
+    # Drop rows with missing values
+    filtered_df = filtered_df.dropna(subset=numeric_columns)
+    
     fig_comparison = px.line(
         filtered_df,
         x="datetime",
