@@ -2,6 +2,9 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
+# لازم تيجي هنا
+st.set_page_config(page_title="Golden.Egy", layout="wide")
+
 # 🟡 تحميل البيانات
 @st.cache_data
 def load_data():
