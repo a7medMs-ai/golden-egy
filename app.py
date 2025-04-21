@@ -16,6 +16,25 @@ def load_data():
 
 df = load_data()
 
+# Debugging: Display dataset information
+st.write("First few rows of the dataset:")
+st.write(df.head())
+
+st.write("Summary of the dataset:")
+st.write(df.describe())
+
+st.write("Data types of each column:")
+st.write(df.dtypes)
+
+st.write("Missing values in each column:")
+st.write(df.isnull().sum())
+
+# Convert numeric columns to numeric and drop missing values
+for col in ["عيار 21", "دولار البنوك", "دولار الصاغة"]:
+    if col in df.columns:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+df = df.dropna(subset=["عيار 21", "دولار البنوك", "دولار الصاغة"])
+
 # 🎨 Title
 st.title("💰 Golden.Egy – Gold & Dollar Tracker")
 
@@ -33,7 +52,7 @@ metric = st.sidebar.selectbox("📊 Choose Metric to Track:", metric_options, in
 
 # Ensure the selected metric exists in the dataframe
 if metric not in filtered_df.columns:
-    st.error(f"The column '{metric}' is not available in the dataset.")
+    st.error(f"The selected column '{metric}' is not available in the dataset.")
     st.stop()
 
 # Main chart for selected metric
@@ -43,28 +62,13 @@ fig = px.line(
     y=metric,
     title=f"Movement of {metric} Over Time",
     labels={"datetime": "Date", metric: "Price"},
-    hover_data={"Difference": filtered_df["سعر البيع"] - filtered_df["سعر الشراء"] if metric == "عيار 21" else None},
 )
-
-# Add custom hover template for "عيار 21"
-if metric == "عيار 21":
-    fig.update_traces(
-        hovertemplate="Date: %{x}<br>Price: %{y}<br>Difference: %{customdata[0]}<extra></extra>",
-    )
 
 st.plotly_chart(fig, use_container_width=True)
 
 # 💰 Show three lines: Gold 21, Bank Dollar, and Jewelry Dollar
 if metric == "عيار 21":
     st.subheader("Comparison: Gold 21 vs. Dollar Prices")
-    
-    # Ensure columns are numeric
-    numeric_columns = ["عيار 21", "دولار البنوك", "دولار الصاغة"]
-    for col in numeric_columns:
-        filtered_df[col] = pd.to_numeric(filtered_df[col], errors="coerce")
-    
-    # Drop rows with missing values
-    filtered_df = filtered_df.dropna(subset=numeric_columns)
     
     fig_comparison = px.line(
         filtered_df,
